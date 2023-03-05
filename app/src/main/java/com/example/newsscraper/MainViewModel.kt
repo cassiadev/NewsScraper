@@ -8,7 +8,7 @@ class MainViewModel : ViewModel() {
     private val _data = mutableStateOf("Data to be scraped in")
     val data: State<String> = _data
 
-    fun startScraping() {
+    fun startScraping(searchKeyword: String) {
         _data.value = "Value of data to be scraped in"
     }
 }

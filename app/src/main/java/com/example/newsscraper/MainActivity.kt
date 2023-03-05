@@ -8,7 +8,7 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -39,6 +39,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun ScraperScreen() {
     val viewModel = viewModel<MainViewModel>()
+    var searchKeyword by remember { mutableStateOf("") }
     Column(
         modifier = Modifier.padding(horizontal = 50.dp),
         verticalArrangement = Arrangement.Top,
@@ -60,13 +61,13 @@ fun ScraperScreen() {
         )
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
-            value = "",
-            onValueChange = {},
+            value = searchKeyword,
+            onValueChange = {newKeyword -> searchKeyword = newKeyword},
             label = { Text(text = "Input Keyword")}
         )
         Spacer(modifier = Modifier.height(20.dp))
         Button(onClick = {
-            viewModel.startScraping()
+            viewModel.startScraping(searchKeyword)
         }) {
             Text(text = "Search")
         }
