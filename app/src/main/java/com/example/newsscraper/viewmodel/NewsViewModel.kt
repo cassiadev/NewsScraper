@@ -17,6 +17,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import okio.IOException
+import org.jsoup.Jsoup
 
 class NewsViewModel : ViewModel() {
     private val _articles = mutableStateOf(emptyList<NewsArticle>())
@@ -27,12 +28,10 @@ class NewsViewModel : ViewModel() {
 
     suspend fun searchNews(keyword: String): List<NewsArticle> = withContext(Dispatchers.IO) {
         try {
-            val client = OkHttpClient()
-            val request = Request.Builder().url(url).addHeader("Authorization", "Bearer $token").build()
-            val response: Response = client.newCall(request = request).execute()
-            val responseString = response.body?.string() ?: ""
-            Log.d(url, responseString)
-            /*TODO Break down responseString to be fit into List<NewsArticle>*/
+            val jsoupConnection = Jsoup.connect(url).header("Authorization", "Bearer $token")
+            val jsoupDocument = jsoupConnection.get()
+            Log.d(url, jsoupDocument.body().toString())
+            /*TODO Break down jsoupDocument to be fit into List<NewsArticle>*/
             return@withContext emptyList<NewsArticle>() // articles
         } catch (e: Exception) {
             e.printStackTrace()
