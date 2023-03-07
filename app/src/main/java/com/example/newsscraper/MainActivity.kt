@@ -14,6 +14,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -51,12 +54,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-//    override fun onDestroy() {
-//        super.onDestroy()
-//        // Cancel all coroutines running in this Activity's scope
-//        CoroutineScope(Dispatchers.Main).cancel()
-//    }
 }
 
 @Composable
@@ -100,6 +97,72 @@ fun NewsScraperApp() {
             modifier = Modifier.align(Alignment.End)
         ) {
                 Text(text = "Search")
+        }
+
+        if (articles.isNotEmpty()) {
+            LazyColumn {
+                items(articles) {newsItem ->
+                    NewsItem(newsItem)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun NewsItem(article: NewsArticle) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(5.dp)
+    ) {
+        Column(modifier = Modifier.padding(10.dp)) {
+            Text(
+                text = article.title,
+                style = MaterialTheme.typography.h6,
+                fontWeight = FontWeight.Bold,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Text(
+                text = article.author,
+                style = MaterialTheme.typography.body1,
+                color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
+                modifier = Modifier.padding(top = 8.dp)
+            )
+            Image(
+                painter = rememberAsyncImagePainter(model = article.imageUrl),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 5.dp, bottom = 10.dp)
+                    .aspectRatio(16f / 9f)
+            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.DateRange,
+                    contentDescription = "Date",
+                    modifier = Modifier.size(10.dp)
+                )
+                Text(
+                    text = article.createdDate,
+                    style = MaterialTheme.typography.caption,
+                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
+                    modifier = Modifier.padding(start = 2.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Icon(
+                    imageVector = Icons.Default.Favorite,
+                    contentDescription = "Likes",
+                    modifier = Modifier.size(10.dp)
+                )
+                Text(
+                    text = article.likes.toString(),
+                    style = MaterialTheme.typography.caption,
+                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
+                    modifier = Modifier.padding(start = 2.dp)
+                )
+            }
         }
     }
 }

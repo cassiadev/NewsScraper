@@ -32,7 +32,7 @@ class NewsViewModel : ViewModel() {
             val jsoupDocument = jsoupConnection.get()
             Log.d(url, jsoupDocument.body().toString())
             /*TODO Break down jsoupDocument to be fit into List<NewsArticle>*/
-            return@withContext emptyList<NewsArticle>() // articles
+            return@withContext emptyList<NewsArticle>() // return@withContext articles
         } catch (e: Exception) {
             e.printStackTrace()
             return@withContext emptyList<NewsArticle>()
