@@ -94,7 +94,7 @@ fun NewsScraperApp() {
         Button(
             onClick = {
                 viewModel.viewModelScope.launch {
-                    viewModel.searchNews(searchKeyword)
+                    articles = viewModel.searchNews(searchKeyword)
                 }
             },
             modifier = Modifier.align(Alignment.End)

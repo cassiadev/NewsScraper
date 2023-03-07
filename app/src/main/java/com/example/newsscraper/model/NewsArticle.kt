@@ -8,6 +8,6 @@ data class NewsArticle(
     val text: String,
     val name: String,
     val imageUrl: String,
-    val createdAt: String,
+    val createdDate: String,
     val favorites: Int,
 )

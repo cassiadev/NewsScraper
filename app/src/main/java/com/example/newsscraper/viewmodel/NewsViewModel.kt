@@ -1,6 +1,7 @@
 package com.example.newsscraper
 
 import android.content.res.Configuration
+import android.nfc.Tag
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
@@ -15,25 +16,27 @@ import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
+import okio.IOException
 
 class NewsViewModel : ViewModel() {
-//    private val _data = mutableStateOf("Data to be scraped in")
-//    val data: State<String> = _data
-
     private val _articles = mutableStateOf(emptyList<NewsArticle>())
-    val articles: MutableState<List<NewsArticle>> = _articles
+    var articles: MutableState<List<NewsArticle>> = _articles
 
-    private val url = "https://qiita.com/api/v2?token=67f6b095940f27470c91158406f003f5b74732b6"
+    private val url = "https://qiita.com"
+    private val token = "67f6b095940f27470c91158406f003f5b74732b6"
 
-    suspend fun searchNews(keyword: String) {
-        return withContext(Dispatchers.IO) {
+    suspend fun searchNews(keyword: String): List<NewsArticle> = withContext(Dispatchers.IO) {
+        try {
             val client = OkHttpClient()
-            val request = Request.Builder().url(url).build()
-            val response: Response = client.newCall(request).execute()
-            if (response.isSuccessful) {
-                val news = response.body?.string() ?: ""
-                
-            }
+            val request = Request.Builder().url(url).addHeader("Authorization", "Bearer $token").build()
+            val response: Response = client.newCall(request = request).execute()
+            val responseString = response.body?.string() ?: ""
+            Log.d(url, responseString)
+            /*TODO Break down responseString to be fit into List<NewsArticle>*/
+            return@withContext emptyList<NewsArticle>() // articles
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return@withContext emptyList<NewsArticle>()
         }
     }
 }
