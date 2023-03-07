@@ -1,26 +1,40 @@
 package com.example.newsscraper
 
+import android.content.Intent
 import android.content.res.Configuration
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.newsscraper.ui.theme.NewsScraperTheme
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
+import coil.compose.rememberAsyncImagePainter
+import com.example.newsscraper.model.NewsArticle
+import kotlinx.coroutines.*
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import org.json.JSONObject
+import java.text.SimpleDateFormat
+import java.util.*
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,23 +46,25 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    ScraperScreen()
+                    NewsScraperApp()
                 }
             }
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        // Cancel all coroutines running in this Activity's scope
-        CoroutineScope(Dispatchers.Main).cancel()
-    }
+//    override fun onDestroy() {
+//        super.onDestroy()
+//        // Cancel all coroutines running in this Activity's scope
+//        CoroutineScope(Dispatchers.Main).cancel()
+//    }
 }
 
 @Composable
-fun ScraperScreen() {
-    val viewModel = viewModel<MainViewModel>()
+fun NewsScraperApp() {
+    val viewModel = viewModel<NewsViewModel>()
     var searchKeyword by remember { mutableStateOf("") }
+    var articles by remember { mutableStateOf<List<NewsArticle>>(emptyList()) }
+
     Column(
         modifier = Modifier.padding(horizontal = 50.dp),
         verticalArrangement = Arrangement.Top,
@@ -75,10 +91,15 @@ fun ScraperScreen() {
             label = { Text(text = "Input Keyword")}
         )
         Spacer(modifier = Modifier.height(20.dp))
-        Button(onClick = {
-            viewModel.startScraping(searchKeyword)
-        }) {
-            Text(text = "Search")
+        Button(
+            onClick = {
+                viewModel.viewModelScope.launch {
+                    viewModel.searchNews(searchKeyword)
+                }
+            },
+            modifier = Modifier.align(Alignment.End)
+        ) {
+                Text(text = "Search")
         }
     }
 }
@@ -104,5 +125,5 @@ fun ScraperScreen() {
 )
 @Composable
 fun DefaultPreview() {
-    ScraperScreen()
+    NewsScraperApp()
 }

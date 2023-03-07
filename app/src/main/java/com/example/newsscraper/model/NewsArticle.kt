@@ -5,10 +5,9 @@ import java.util.Date
 
 @Immutable
 data class NewsArticle(
-    val title: String,
-    val author: String,
+    val text: String,
+    val name: String,
     val imageUrl: String,
-    val uploadDate: Date,
-    val likesCount: Int,
-    val articleUrl: String,
+    val createdAt: String,
+    val favorites: Int,
 )
