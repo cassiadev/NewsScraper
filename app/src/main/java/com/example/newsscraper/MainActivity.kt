@@ -93,7 +93,6 @@ fun NewsScraperApp() {
                 viewModel.viewModelScope.launch {
                     viewModel.searchNews(searchKeyword)
                     articles = viewModel.articles.value
-                    println(articles)
                 }
             },
             modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -175,20 +174,20 @@ fun NewsItem(article: NewsArticle) {
     showBackground = true,
     showSystemUi = true,
 )
-@Preview(
-    name = "dark",
-    group = "theme",
-    showBackground = true,
-    showSystemUi = true,
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
-)
-@Preview(
-    name = "tablet",
-    showBackground = true,
-    showSystemUi = true,
-    device = Devices.TABLET,
-)
+
 @Composable
 fun DefaultPreview() {
     NewsScraperApp()
+}
+
+@Preview
+@Composable
+fun NewsItemPreview() {
+    NewsItem(article = NewsArticle(
+        title = "Title",
+        author = "author123(Author)・AuthorCorporation",
+        imageUrl = "https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/154355/profile-images/1591077676",
+        createdDate = "2023-01-01",
+        likes = 100
+    ))
 }
