@@ -169,7 +169,6 @@ fun NewsItem(article: NewsArticle) {
 }
 
 @Preview(
-    name = "light",
     group = "theme",
     showBackground = true,
     showSystemUi = true,
@@ -186,7 +185,7 @@ fun NewsItemPreview() {
     NewsItem(article = NewsArticle(
         title = "Title",
         author = "author123(Author)・AuthorCorporation",
-        imageUrl = "https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/154355/profile-images/1591077676",
+        imageUrl = "",
         createdDate = "2023-01-01",
         likes = 100
     ))
