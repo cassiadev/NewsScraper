@@ -91,10 +91,12 @@ fun NewsScraperApp() {
         Button(
             onClick = {
                 viewModel.viewModelScope.launch {
-                    articles = viewModel.searchNews(searchKeyword)
+                    viewModel.searchNews(searchKeyword)
+                    articles = viewModel.articles.value
+                    println(articles)
                 }
             },
-            modifier = Modifier.align(Alignment.End)
+            modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
                 Text(text = "Search")
         }
