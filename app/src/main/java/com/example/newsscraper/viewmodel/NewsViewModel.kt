@@ -12,7 +12,7 @@ class NewsViewModel : ViewModel() {
     val articles: List<NewsArticle> = _articles
 
     private val url = "https://qiita.com"
-    private val token = "67f6b095940f27470c91158406f003f5b74732b6"  // Does not seem to work since Mar.11 2023 even though the submission date due is 23:59:59 Mar.11 2023
+    private val token = "67f6b095940f27470c91158406f003f5b74732b6"
 
     private var isLoading = false
     private var page = 1
@@ -24,7 +24,7 @@ class NewsViewModel : ViewModel() {
                 val newArticles = searchNews(keyword, page)
                 _articles.addAll(newArticles)
                 isLoading = false
-                page++  /*TODO Enable loading more items that come out when 「もっと読む」 is pressed once in qiita.com, with the value of 'page' is plused*/
+                page++
             }
         }
     }
@@ -32,6 +32,7 @@ class NewsViewModel : ViewModel() {
     private suspend fun searchNews(keyword: String, page: Int): List<NewsArticle> = withContext(Dispatchers.IO) {
         val articlesMutable: MutableList<NewsArticle> = arrayListOf()
         try {
+            /*TODO Use library such as Moshi to obtain json response from https://qiita.com/api/v2/items, not jsoup which is for scraping html*/
             val jsoupConnection = Jsoup.connect(url).header("Authorization", "Bearer $token")
             val jsoupDocument = jsoupConnection.get()
 
