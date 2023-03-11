@@ -3,10 +3,7 @@ package com.example.newsscraper
 import android.content.res.Configuration
 import android.nfc.Tag
 import android.util.Log
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.toMutableStateList
+import androidx.compose.runtime.*
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -21,13 +18,28 @@ import okio.IOException
 import org.jsoup.Jsoup
 
 class NewsViewModel : ViewModel() {
-    private val _articles = mutableStateOf(emptyList<NewsArticle>())
-    val articles: MutableState<List<NewsArticle>> = _articles
+    private val _articles = mutableStateListOf<NewsArticle>()//mutableStateOf(emptyList<NewsArticle>())
+    val articles: List<NewsArticle> = _articles//MutableState<List<NewsArticle>> = _articles
 
     private val url = "https://qiita.com"
-    private val token = "67f6b095940f27470c91158406f003f5b74732b6"
+    private val token = "67f6b095940f27470c91158406f003f5b74732b6"  // Does not seem to work since Mar.11 2023 even though the submission date is 23:59:59 Mar.11 2023
 
-    suspend fun searchNews(keyword: String) = withContext(Dispatchers.IO) {
+    private var isLoading = false
+    private var page = 1
+
+    fun loadMoreItems(keyword: String) {
+        if (!isLoading) {
+            viewModelScope.launch {
+                isLoading = true
+                val newArticles = searchNews(keyword, page)
+                _articles.addAll(newArticles)
+                isLoading = false
+                page++  /*TODO Enable loading more items that come out when 「もっと読む」 is pressed once in qiita.com, with the value of 'page' is plused*/
+            }
+        }
+    }
+
+    private suspend fun searchNews(keyword: String, page: Int): List<NewsArticle> = withContext(Dispatchers.IO) {
         val articlesMutable: MutableList<NewsArticle> = arrayListOf()
         try {
             val jsoupConnection = Jsoup.connect(url).header("Authorization", "Bearer $token")
@@ -49,11 +61,17 @@ class NewsViewModel : ViewModel() {
                     createdDate = jsoupArticle.select("span.style-1elrt2j").first()!!.text(),
                     likes = jsoupArticle.select("span.style-176d67y").first()!!.text().toInt(),
                 )
+                if (!article.title.contains(keyword)
+                    && !article.author.contains(keyword)
+                    && !article.createdDate.contains(keyword)
+                    && !keyword.contains(article.likes.toString())) continue
+
                 articlesMutable.add(article)
             }
-            _articles.value = articlesMutable.toList()
+            return@withContext articlesMutable
         } catch (e: Exception) {
             e.printStackTrace()
+            return@withContext emptyList()
         }
     }
 }

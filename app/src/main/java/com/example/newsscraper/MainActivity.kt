@@ -10,7 +10,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -33,6 +36,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import com.example.newsscraper.model.NewsArticle
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filter
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
@@ -61,6 +66,13 @@ fun NewsScraperApp() {
     val viewModel = viewModel<NewsViewModel>()
     var searchKeyword by remember { mutableStateOf("") }
     var articles by remember { mutableStateOf<List<NewsArticle>>(emptyList()) }
+    val lazyListState = rememberLazyListState()
+    val isReachedToListEnd by remember {
+        derivedStateOf {
+            lazyListState.layoutInfo.visibleItemsInfo.size < lazyListState.layoutInfo.totalItemsCount
+                    && lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index == lazyListState.layoutInfo.totalItemsCount
+        }
+    }
 
     Column(
         modifier = Modifier.padding(horizontal = 50.dp),
@@ -91,8 +103,8 @@ fun NewsScraperApp() {
         Button(
             onClick = {
                 viewModel.viewModelScope.launch {
-                    viewModel.searchNews(searchKeyword)
-                    articles = viewModel.articles.value
+                    viewModel.loadMoreItems(searchKeyword)
+                    articles = viewModel.articles
                 }
             },
             modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -105,6 +117,10 @@ fun NewsScraperApp() {
                 items(articles) {newsItem ->
                     NewsItem(newsItem)
                 }
+            }
+
+            LaunchedEffect(lazyListState) {
+                viewModel.loadMoreItems(keyword = searchKeyword)
             }
         }
     }
