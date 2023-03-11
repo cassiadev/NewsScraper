@@ -1,7 +1,6 @@
 package com.example.newsscraper.model
 
 import androidx.compose.runtime.Immutable
-import java.util.Date
 
 @Immutable
 data class NewsArticle(
