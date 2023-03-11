@@ -17,7 +17,7 @@ class NewsViewModel : ViewModel() {
     private var isLoading = false
     private var page = 1
 
-    fun loadMoreItems(keyword: String) {
+    fun loadItems(keyword: String) {
         if (!isLoading) {
             viewModelScope.launch {
                 isLoading = true

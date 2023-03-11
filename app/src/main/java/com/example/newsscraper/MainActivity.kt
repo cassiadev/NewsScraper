@@ -87,7 +87,7 @@ fun NewsScraperApp() {
         Button(
             onClick = {
                 viewModel.viewModelScope.launch {
-                    viewModel.loadMoreItems(searchKeyword)
+                    viewModel.loadItems(searchKeyword)
                     articles = viewModel.articles
                 }
             },
@@ -103,8 +103,9 @@ fun NewsScraperApp() {
                 }
             }
 
-            LaunchedEffect(lazyListState) {
-                viewModel.loadMoreItems(keyword = searchKeyword)
+            val coroutineScope = rememberCoroutineScope()
+            LaunchedEffect(coroutineScope) {
+                if (isReachedToListEnd) viewModel.loadItems(keyword = searchKeyword)
             }
         }
     }
