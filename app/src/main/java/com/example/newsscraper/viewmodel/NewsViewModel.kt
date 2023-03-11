@@ -22,7 +22,7 @@ class NewsViewModel : ViewModel() {
     val articles: List<NewsArticle> = _articles//MutableState<List<NewsArticle>> = _articles
 
     private val url = "https://qiita.com"
-    private val token = "67f6b095940f27470c91158406f003f5b74732b6"  // Does not seem to work since Mar.11 2023 even though the submission date is 23:59:59 Mar.11 2023
+    private val token = "67f6b095940f27470c91158406f003f5b74732b6"  // Does not seem to work since Mar.11 2023 even though the submission date due is 23:59:59 Mar.11 2023
 
     private var isLoading = false
     private var page = 1

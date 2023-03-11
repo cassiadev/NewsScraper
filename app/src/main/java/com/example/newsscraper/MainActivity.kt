@@ -189,7 +189,6 @@ fun NewsItem(article: NewsArticle) {
     showBackground = true,
     showSystemUi = true,
 )
-
 @Composable
 fun DefaultPreview() {
     NewsScraperApp()
