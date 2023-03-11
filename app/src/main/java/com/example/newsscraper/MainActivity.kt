@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
@@ -16,6 +17,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Devices
@@ -103,6 +105,7 @@ fun NewsScraperApp() {
                 }
             }
 
+            // Try loading additional articles when the list is reached to an end
             val coroutineScope = rememberCoroutineScope()
             LaunchedEffect(coroutineScope) {
                 if (isReachedToListEnd) viewModel.loadItems(keyword = searchKeyword)
@@ -119,28 +122,37 @@ fun NewsItem(article: NewsArticle) {
             .padding(5.dp)
     ) {
         Column(modifier = Modifier.padding(10.dp)) {
-            Text(
-                text = article.title,
-                style = MaterialTheme.typography.h6,
-                fontWeight = FontWeight.Bold,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-            )
-            Text(
-                text = article.author,
-                style = MaterialTheme.typography.body1,
-                color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
-                modifier = Modifier.padding(top = 8.dp)
-            )
-            Image(
-                painter = rememberAsyncImagePainter(model = article.imageUrl),
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 5.dp, bottom = 10.dp)
-                    .aspectRatio(16f / 9f)
-            )
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row() {
+                Image(
+                    painter = rememberAsyncImagePainter(model = article.imageUrl),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(50.dp)
+                        .padding(top = 5.dp, bottom = 10.dp)
+                        .aspectRatio(1f / 1f)
+                        .clip(CircleShape)
+                )
+                Column() {
+                    Text(
+                        text = article.title,
+                        style = MaterialTheme.typography.h6,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    Text(
+                        text = article.author,
+                        style = MaterialTheme.typography.body1,
+                        color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(start = 50.dp)
+            ) {
                 Icon(
                     imageVector = Icons.Default.DateRange,
                     contentDescription = "Date",

@@ -51,6 +51,8 @@ class NewsViewModel : ViewModel() {
                     createdDate = jsoupArticle.select("span.style-1elrt2j").first()!!.text(),
                     likes = jsoupArticle.select("span.style-176d67y").first()!!.text().toInt(),
                 )
+
+                // Filter each article with keyword
                 if (!article.title.contains(keyword)
                     && !article.author.contains(keyword)
                     && !article.createdDate.contains(keyword)
