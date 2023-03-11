@@ -32,7 +32,9 @@ class NewsViewModel : ViewModel() {
     private suspend fun searchNews(keyword: String, page: Int): List<NewsArticle> = withContext(Dispatchers.IO) {
         val articlesMutable: MutableList<NewsArticle> = arrayListOf()
         try {
-            /*TODO Use library such as Moshi to obtain json response from https://qiita.com/api/v2/items, not jsoup which is for scraping html*/
+            /*TODO Use library such as Moshi to obtain json response from https://qiita.com/api/v2/items, not jsoup which is for scraping html.
+            *      The filtering should be implemented by editing url itself*/
+
             val jsoupConnection = Jsoup.connect(url).header("Authorization", "Bearer $token")
             val jsoupDocument = jsoupConnection.get()
 
